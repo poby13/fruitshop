@@ -68,7 +68,7 @@ def create_file(file_nm, data):
     while os.path.isfile(file_nm):
         n += 1
         idx = file_nm.index('.txt')
-        if n > 1:
+        if n > 2:
             idx2 = file_nm.index('(')
             file_nm = '{0}({1}){2}'.format(file_nm[:idx2], n, file_nm[idx:])
         else:
