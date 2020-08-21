@@ -64,7 +64,7 @@ def create_file(file_nm, data):
     :return:
     """
     # 같은 날에 파일이 이미 있으면 (숫자)로 파일명을 변경하여 추가한다. sample(1).txt
-    n = 0
+    n = 1
     while os.path.isfile(file_nm):
         n += 1
         idx = file_nm.index('.txt')
@@ -99,9 +99,10 @@ def do_init():
             print("""
 폴더가 이미 있습니다.
 source 폴더를 지우고 새로 만드시려면 ... y
+기존 폴더에 샘플을 추가하려면 ... a
 작업을 취소하려면 ... n
             """)
-            is_folder_exists = input("계속하시겠습니까? 키를 입력하고 엔터 ... (y, [n])")
+            is_folder_exists = input("계속하시겠습니까? 키를 입력하고 엔터 ... (y, a, [n])")
             if is_folder_exists == 'n':
                 print("샘플파일 작업이 취소되었습니다.")
                 return
@@ -111,8 +112,10 @@ source 폴더를 지우고 새로 만드시려면 ... y
                 # os.rmdir(base_dir)
                 shutil.rmtree(base_dir, ignore_errors=True)
                 print("source 폴더를 생성하고 샘플데이터를 추가합니다.")
+            elif is_folder_exists == 'a':
+                print("기존 source 폴더에 데이터를 추가합니다.")
             else:
-                print("잘 못 입력되었습니다. 다시 시작하세요.")
+                print("입력값이 잘 못 입력되었습니다.")
                 return
     except NameError as e:
         pass
