@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """
 '과일가게'는 각 지점에서 하루 2회 판매량을 텍스트 파일로 전달한
-전달 받는 샘플 텍스트 파일을 자동으로 source 폴더에 생성
+전달 받는 샘플 텍스트 파일을 자동으로 sample 폴더에 생성
 파일은 '년월' 디렉토리에 '날짜' 폴더를 만들어 판매현황 파일이 추가
 
-$ python createsource.py
+$ python createsample.py
 
 
 pathlib :: https://docs.python.org/3/library/pathlib.html
@@ -22,7 +22,8 @@ version 1.0, 20/08/12
 since   python3.5
 """
 
-import os, shutil
+import os
+import shutil
 from pathlib import Path
 from random import randint
 
@@ -81,7 +82,7 @@ def create_file(file_nm, data):
 def do_init():
     """
     샘플 코드를 생성하기 위해 필요한 점포명과 판매량을 기록할 날짜를 정하고
-    source 폴더에 파일을 월별로 생성한다.
+    sample 폴더에 파일을 월별로 생성한다.
     점포명과 판매일을 정한다. 점포명은 파일명이 된다.
     년월 디렉토리에 날짜 폴더를 만든다.
 
@@ -90,15 +91,15 @@ def do_init():
     branches = ('gangnam', 'songpa', 'nowon', 'incheon', 'suwon')
     dates = ('20200705', '20200706', '20200709', '20200811', '20200812')
 
-    # 현재 경로에 있는 source폴더에 '년월\날짜' 디렉토리 만들기
-    base_dir = '.\\source\\'
+    # 현재 경로에 있는 sample폴더에 '년월\날짜' 디렉토리 만들기
+    base_dir = './sample/'
 
-    # source 폴더가 있는 경우 계속할지 확인
+    # sample 폴더가 있는 경우 계속할지 확인
     try:
         if os.path.isdir(base_dir):
             print("""
 폴더가 이미 있습니다.
-source 폴더를 지우고 새로 만드시려면 ... y
+sample 폴더를 지우고 새로 만드시려면 ... y
 기존 폴더에 샘플을 추가하려면 ... a
 작업을 취소하려면 ... n
             """)
@@ -107,13 +108,13 @@ source 폴더를 지우고 새로 만드시려면 ... y
                 print("샘플파일 작업이 취소되었습니다.")
                 return
             elif is_folder_exists == 'y':
-                print("source 폴더를 삭제합니다.")
+                print("sample 폴더를 삭제합니다.")
                 # rmdir은 비어있지 않은 디렉토리를 삭제하지 못함.
                 # os.rmdir(base_dir)
                 shutil.rmtree(base_dir, ignore_errors=True)
-                print("source 폴더를 생성하고 샘플데이터를 추가합니다.")
+                print("sample 폴더를 생성하고 샘플데이터를 추가합니다.")
             elif is_folder_exists == 'a':
-                print("기존 source 폴더에 데이터를 추가합니다.")
+                print("기존 sample 폴더에 데이터를 추가합니다.")
             else:
                 print("입력값이 잘 못 입력되었습니다.")
                 return
@@ -121,18 +122,16 @@ source 폴더를 지우고 새로 만드시려면 ... y
         pass
 
     for dt in dates:
-        path = os.path.join(base_dir, '{0}\\{1}'.format(dt[:6], dt[6:]))
+        path = os.path.join(base_dir, '{0}/{1}'.format(dt[:6], dt[6:]))
         # 디렉토리를 만들때는
         Path(path).mkdir(parents=True, exist_ok=True)
 
         # 지점별 판매 샘플 파일 만들기
         for br in branches:
-            text = '{0}\n'.format(br)
+            text = '{0}_{1}_{2}\n'.format(br, '#fruitshop#', dt)
             text += create_sale_data()
-            path_file = '{0}\\{1}.txt'.format(path, br)
+            path_file = '{0}/{1}.txt'.format(path, br)
             create_file(path_file, text)
-
-
 
 
 if __name__ == '__main__':

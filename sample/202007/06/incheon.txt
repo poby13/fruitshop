@@ -1,0 +1,2 @@
+incheon_#fruitshop#_20200706
+h,1,i,5,j,5,g,4,g,2,b,1,h,3,i,1,i,4
