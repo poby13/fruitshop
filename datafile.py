@@ -13,38 +13,46 @@ file_list = []
 
 class Sale:
     def __init__(self, file):
-        self.file = file
+        self._file = file
+
+    @property
+    def file_name(self):
+        return self._file
 
     # 첫행에 작성된 지점명을 가져온다.
+    @property
     def branch_name(self):
-        return fileext.get_nth_line(self.file, 1)
+        return fileext.get_nth_line(self._file, 1)
 
     # 두번째 행에 작성된 판매자료를 가져온다.
+    @property
     def sale_data(self):
-        tmp = fileext.get_nth_line(self.file, 2)
+        tmp = fileext.get_nth_line(self._file, 2)
         tmp = tmp.split(',')
         length = int(len(tmp)/2)
         return [(tmp[i], tmp[i+1]) for i in range(length)]
 
-    # 과일가게 판매파일인지 확인
-    def is_sale_data(self):
-        result = True
-        try:
-            Sale.branch_name().index('_#fruitshop#_')
-        except ValueError as err:
-            logging.info('{}은 판매정보 파일이 아닙니다.'.format(self.file))
-            return False
-        return result
+
+# 과일가게 판매파일인지 확인
+def is_sale_data(obj):
+    result = True
+    try:
+        obj.branch_name.index('_#fruitshop#_')
+    except ValueError as err:
+        logging.info('{}은 판매정보 파일이 아닙니다.'.format(obj.file_name))
+        return False
+    return result
 
 
-def make_monthly_data(target):
+# 지정된 월의 판매정보 파일 목록을 가져온다.
+def get_target_files(target):
     for t in os.listdir(target):
         full_path = os.path.join(target, t)
         if os.path.isdir(full_path):
-            make_monthly_data(full_path)
+            get_target_files(full_path)
         else:
             file_list.append(full_path)
-    # 월간 판매량을 구한다.
-    # csv 형식으로 저장한다.
+# 월간 판매량을 구한다.
+# csv 형식으로 저장한다.
 
 
