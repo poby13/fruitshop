@@ -8,6 +8,7 @@ import os
 import logging
 from actlib import fileext
 
+# get_target_files()를 통해 디렉토리의 파일목록을 가져온다.
 file_list = []
 
 
@@ -29,11 +30,11 @@ class Sale:
     def sale_data(self):
         tmp = fileext.get_nth_line(self._file, 2)
         tmp = tmp.split(',')
-        length = int(len(tmp)/2)
-        return [(tmp[i], tmp[i+1]) for i in range(length)]
+        length = int(len(tmp) / 2)
+        return [(tmp[i], tmp[i + 1]) for i in range(length)]
 
 
-# 과일가게 판매파일인지 확인
+# 판매정보 파일인지 확인
 def is_sale_data(obj):
     result = True
     try:
@@ -51,8 +52,26 @@ def get_target_files(target):
         if os.path.isdir(full_path):
             get_target_files(full_path)
         else:
-            file_list.append(full_path)
+            # 판매정보인 경우만 목록에 추가
+            if is_sale_data(Sale(full_path)):
+                file_list.append(full_path)
+    return file_list
+
+
 # 월간 판매량을 구한다.
+def get_monthly_sale_data():
+    pass
+
+
 # csv 형식으로 저장한다.
+def sale_data_to_csv():
+    pass
 
 
+if __name__ == "__main__":
+    """
+    모듈 테스트
+    """
+    target = os.path.join(os.getcwd(), 'sample', '202007')
+    # 모듈 사용시 클로저
+    get_target_files(target)
