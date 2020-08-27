@@ -6,61 +6,75 @@
 """
 import os
 import logging
-from actlib import fileext
+from actionlib import fileext
 
-# get_target_files()를 통해 디렉토리의 파일목록을 가져온다.
-file_list = []
+_file_list = []
+_sale_data = {}
 
 
 class Sale:
     def __init__(self, file):
-        self._file = file
+        # __는 클래스 속성명을 맹글링하여 클래스간 속성명 충돌을 방지한다.
+        self.__file = file
 
     @property
     def file_name(self):
-        return self._file
+        return self.__file
 
     # 첫행에 작성된 지점명을 가져온다.
     @property
     def branch_name(self):
-        return fileext.get_nth_line(self._file, 1)
+        return fileext.get_nth_line(self.__file, 1)
 
     # 두번째 행에 작성된 판매자료를 가져온다.
     @property
     def sale_data(self):
-        tmp = fileext.get_nth_line(self._file, 2)
-        tmp = tmp.split(',')
-        length = int(len(tmp) / 2)
-        return [(tmp[i], tmp[i + 1]) for i in range(length)]
+        temp = fileext.get_nth_line(self.__file, 2)
+        temp = temp.split(',')
+        length = int(len(temp) / 2)
+        return [(temp[_ * 2], int(temp[_ * 2 + 1])) for _ in range(length)]
 
 
 # 판매정보 파일인지 확인
-def is_sale_data(obj):
-    result = True
+# object_는 예약어와 겹치는 문제를 피하기 위해 _를 붙인다.
+def is_sale_data(object_):
+    temp = True
     try:
-        obj.branch_name.index('_#fruitshop#_')
+        object_.branch_name.index('_#fruitshop#_')
     except ValueError as err:
-        logging.info('{}은 판매정보 파일이 아닙니다.'.format(obj.file_name))
+        logging.info('{}은 판매정보 파일이 아닙니다.'.format(object_.file_name))
         return False
-    return result
+    return temp
 
 
-# 지정된 월의 판매정보 파일 목록을 가져온다.
-def get_target_files(target):
-    for t in os.listdir(target):
-        full_path = os.path.join(target, t)
-        if os.path.isdir(full_path):
-            get_target_files(full_path)
+# 지정된 월의 판매정보 파일 목록을 재귀적으로 처리하여 가져온다.
+def get_dir_files(target):
+    for _ in os.listdir(target):
+        path = os.path.join(target, _)
+        if os.path.isdir(path):
+            get_dir_files(path)
         else:
             # 판매정보인 경우만 목록에 추가
-            if is_sale_data(Sale(full_path)):
-                file_list.append(full_path)
-    return file_list
+            if is_sale_data(Sale(path)):
+                _file_list.append(path)
+    return _file_list
 
 
 # 월간 판매량을 구한다.
-def get_monthly_sale_data():
-    pass
+def get_monthly_sale_data(file):
+    obj = Sale(file)
+    # 판매자료가 아닌 경우 걸러낸다.
+    if not is_sale_data(obj):
+        print(f'{file}은 판매자료가 아닙니다.')
+        del obj
+        return False
+    # 합계를 구하기 쉽도록 자료형을 변환
+    sd = obj.sale_data
+    for _ in range(len(sd)):
+        name, count = sd[_][0], sd[_][1]
+        if name in _sale_data:
+            count = _sale_data[name] + count
+        _sale_data[name] = count
 
 
 # csv 형식으로 저장한다.
@@ -72,6 +86,10 @@ if __name__ == "__main__":
     """
     모듈 테스트
     """
-    target = os.path.join(os.getcwd(), 'sample', '202007')
-    # 모듈 사용시 클로저
-    get_target_files(target)
+    # 2020년 7월 판매자료 파일목록을 구한다.
+    _dir = os.path.join(os.getcwd(), 'sample', '202007')
+    get_dir_files(_dir)  # 모듈 사용시 클로저
+    # 7월 월간판매량을 구한다.
+    for _ in _file_list:
+        get_monthly_sale_data(_)
+    print(_sale_data)

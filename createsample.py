@@ -57,25 +57,25 @@ def create_sale_data():
 
 
 # 파일저장
-def create_file(file_nm, data):
+def create_file(file_name, data):
     """
     데이터를 파일에 작성하고 지정된 디렉토리에 파일을 생성한다.
-    :param file_nm: (디렉토리/)파일명.txt
+    :param file_name: (디렉토리/)파일명.txt
     :param data: 파일에 기록할 내용
     :return:
     """
     # 같은 날에 파일이 이미 있으면 (숫자)로 파일명을 변경하여 추가한다. sample(1).txt
     n = 1
-    while os.path.isfile(file_nm):
+    while os.path.isfile(file_name):
         n += 1
-        idx = file_nm.index('.txt')
+        index = file_name.index('.txt')
         if n > 2:
-            idx2 = file_nm.index('(')
-            file_nm = '{0}({1}){2}'.format(file_nm[:idx2], n, file_nm[idx:])
+            idx2 = file_name.index('(')
+            file_name = '{0}({1}){2}'.format(file_name[:idx2], n, file_name[index:])
         else:
-            file_nm = '{0}({1}){2}'.format(file_nm[:idx], n, file_nm[idx:])
+            file_name = '{0}({1}){2}'.format(file_name[:index], n, file_name[index:])
 
-    with open(file_nm, 'w') as f:
+    with open(file_name, 'w') as f:
         f.write(data)
 
 
@@ -121,16 +121,16 @@ sample 폴더를 지우고 새로 만드시려면 ... y
     except NameError as e:
         pass
 
-    for dt in dates:
-        path = os.path.join(base_dir, '{0}/{1}'.format(dt[:6], dt[6:]))
+    for date in dates:
+        path = os.path.join(base_dir, '{0}/{1}'.format(date[:6], date[6:]))
         # 디렉토리를 만들때는
         Path(path).mkdir(parents=True, exist_ok=True)
 
         # 지점별 판매 샘플 파일 만들기
-        for br in branches:
-            text = '{0}_{1}_{2}\n'.format(br, '#fruitshop#', dt)
+        for branch in branches:
+            text = '{0}_{1}_{2}\n'.format(branch, '#fruitshop#', date)
             text += create_sale_data()
-            path_file = '{0}/{1}.txt'.format(path, br)
+            path_file = '{0}/{1}.txt'.format(path, branch)
             create_file(path_file, text)
 
 
