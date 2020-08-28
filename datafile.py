@@ -69,7 +69,7 @@ def get_monthly_sale_data(file):
         print(f'{file}은 판매자료가 아닙니다.')
         del obj
         return False
-    # 합계를 구하기 쉽도록 자료형을 변환
+    # 키(상품)이 중복되는지는 확인하여 수량을 더한다.
     sd = obj.sale_data
     for _ in range(len(sd)):
         name, count = sd[_][0], sd[_][1]
