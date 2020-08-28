@@ -7,6 +7,7 @@
 import os
 import logging
 from actionlib import fileext
+from pathlib import Path
 
 _file_list = []
 _sale_data = {}
@@ -78,18 +79,30 @@ def get_monthly_sale_data(file):
 
 
 # csv 형식으로 저장한다.
-def sale_data_to_csv():
-    pass
+def sale_data_to_csv(date):
+    base_dir = './data/'
+    path = os.path.join(base_dir, '{}'.format(date[:4]))
+    # 디렉토리 생성
+    Path(path).mkdir(parents=True, exist_ok=True)
+    # 경로를 포함한 파일명 지정
+    file = '{0}/fruit_{1}_{2}.csv'.format(path, date[:4], date[4:])
+
+    data = "Name, Sales Rate\n"
+    for k, v in _sale_data.items():
+        data += "{0}, {1}\n".format(k, v)
+    fileext.create_file(file, data)
 
 
 if __name__ == "__main__":
     """
     모듈 테스트
     """
+    date = '202007'
     # 2020년 7월 판매자료 파일목록을 구한다.
-    _dir = os.path.join(os.getcwd(), 'sample', '202007')
+    _dir = os.path.join(os.getcwd(), 'sample', date)
     get_dir_files(_dir)  # 모듈 사용시 클로저
     # 7월 월간판매량을 구한다.
     for _ in _file_list:
         get_monthly_sale_data(_)
     print(_sale_data)
+    sale_data_to_csv(date)
